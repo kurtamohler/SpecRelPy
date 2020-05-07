@@ -1,24 +1,37 @@
 import numpy
 
-# position          1-D or greater
-# time              0-D or greater, shape must equal position.shape[:-1]
-# velocity          1-D, shape must equal position.shape[-1]
-# speed_of_light    0-D
-def lorentz_transform(position, time, velocity, speed_of_light=300_000_000):
-    position_shape = position.shape
+# Perform a Lorentz transformation on a set of events.
+#
+# positions        a set of spatial positions
+#                  1-D or greater
+#                  positions.shape[-1] is the number of spatial dimensions to
+#                  use in the transformation
+#
+# times            a set of times corresponding with each position
+#                  0-D or greater
+#                  shape must equal positions.shape[:-1]
+#
+# velocity         the velocity to transform the events by
+#                  1-D
+#                  shape must equal positions.shape[-1]
+#
+# speed_of_light   the maximum speed any object can move
+#                  0-D
+def lorentz_transform(positions, times, velocity, speed_of_light=300_000_000):
+    position_shape = positions.shape
     num_spatial_dims = position_shape[-1]
-    time_shape = time.shape
+    time_shape = times.shape
 
     if len(position_shape) != len(time_shape) + 1:
-        raise ValueError("position must have 1 more dim than time")
+        raise ValueError("positions must have 1 more dim than time")
 
     if position_shape[:-1] != time_shape:
-        raise ValueError("position.shape[:-1] must equal time.shape")
+        raise ValueError("positions.shape[:-1] must equal times.shape")
 
     num_events = numpy.prod(time_shape)
 
-    position_squeezed = position.reshape(num_events, num_spatial_dims)
-    time_squeezed = time.reshape(num_events)
+    position_squeezed = positions.reshape(num_events, num_spatial_dims)
+    time_squeezed = times.reshape(num_events)
 
     position_transformed, time_transformed = lorentz_transform_inner(position_squeezed, time_squeezed, velocity, speed_of_light)
 
@@ -53,6 +66,8 @@ def lorentz_transform_inner(position, time, velocity, speed_of_light=300_000_000
 
     # TODO: I don't like having two different operations here, there must be a generalized way to do it
     if projected_position.ndim == 0:
+        # TODO: Right now, the caller won't exercise this part of the
+        #       code, but it probably should, in the 1-dimensional space
         transformed_position_delta = (projected_position_transformed - projected_position) * velocity_direction
     elif projected_position.ndim >= 1:
         transformed_position_delta = numpy.outer(projected_position_transformed - projected_position, velocity_direction)
