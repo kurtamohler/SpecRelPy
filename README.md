@@ -7,7 +7,7 @@ I've been learning about special relativity, and I wanted to test my knowledge b
 Right now, there's not much here, but here's what's here:
 
 * [lorentz_transform.py](lorentz_transform.py) - The basic space-time Lorentz transform with support for N spatial dimensions.
-* [lorentz_transform_visualization.ipynb](lorentz_transform_visualization.ipynb) - An interactive visualization of a Lorentz transformation of a 2-D square. Requires python3, jupyter, numpy, panel, and plotly
+* [lorentz_transform_visualization.ipynb](lorentz_transform_visualization.ipynb) - An interactive visualization of a Lorentz transformation of a 2-D square.
 
 ## How to run
 
